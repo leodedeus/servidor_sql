@@ -1,0 +1,48 @@
+/* Geral */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1, h2 {
+    margin-bottom: 10px;
+}
+
+/* Container principal */
+.container {
+    display: flex;
+    gap: 20px;
+}
+
+/* Editor SQL */
+.editor, .history {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Histórico */
+.history {
+    max-width: 300px;
+}
+
+/* Tabela de resultados */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+/* Estilo de erros */
+.error {
+    color: red;
+}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor SQL</title>
+    <!-- Link para o arquivo CSS -->
+    <link rel="stylesheet" href="{% static 'app_editor/styles.css' %}">
+</head>
+<body>
+    <h1>Editor SQL</h1>
+
+    <div class="container">
+        <!-- Área de Edição -->
+        <div class="editor">
+            <form method="post">
+                {% csrf_token %}
+                <textarea name="sql_command" rows="6" cols="50" placeholder="Digite seu comando SQL aqui"></textarea>
+                <br>
+                <button type="submit">Executar</button>
+            </form>
+
+            <h2>Resultado</h2>
+            {% if error %}
+                <p class="error">Erro: {{ error }}</p>
+            {% elif result and columns %}
+                <table>
+                    <thead>
+                        <tr>
+                            {% for column in columns %}
+                                <th>{{ column }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in result %}
+                            <tr>
+                                {% for value in row %}
+                                    <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% elif result %}
+                <p>{{ result }}</p>
+            {% else %}
+                <p>Digite um comando SQL para ver o resultado.</p>
+            {% endif %}
+        </div>
+
+        <!-- Histórico -->
+        <div class="history">
+            <h2>Histórico de Comandos</h2>
+            <ul>
+                {% for query in query_history %}
+                    <li>
+                        <strong>Comando:</strong> {{ query.sql_command }}<br>
+                        {% if query.result %}
+                            <span class="error"><strong>Erro:</strong> {{ query.result }}</span>
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li>Nenhum comando executado ainda.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

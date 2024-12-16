@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor SQL</title>
+</head>
+<body>
+    <h1>Editor de Comandos SQL</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <textarea name="sql_command" rows="6" cols="80" placeholder="Digite seu comando SQL aqui..."></textarea><br>
+        <button type="submit">Executar</button>
+    </form>
+
+    <h2>Resultado</h2>
+    {% if error %}
+        <p style="color: red;">Erro: {{ error }}</p>
+    {% elif result and columns %}
+        <table border="1" cellpadding="5">
+            <thead>
+                <tr>
+                    {% for column in columns %}
+                        <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in result %}
+                    <tr>
+                        {% for value in row %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif result %}
+        <p>{{ result }}</p>
+    {% else %}
+        <p>Digite um comando SQL para ver o resultado.</p>
+    {% endif %}
+
+    <h2>Histórico de Comandos</h2>
+    <ul>
+        {% for query in query_history %}
+            <li>
+                <strong>Comando:</strong> {{ query.sql_command }}<br>
+                <strong>Resultado:</strong> {{ query.result }}
+            </li>
+        {% empty %}
+            <li>Nenhum comando executado ainda.</li>
+        {% endfor %}
+    </ul>
+    
+</body>
+</html>
