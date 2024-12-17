@@ -24,7 +24,7 @@ h1, h2 {
 
 /* Histórico */
 .history {
-    max-width: 300px;
+    max-width: 500px;
 }
 
 /* Tabela de resultados */
@@ -40,6 +40,11 @@ table, th, td {
 th, td {
     padding: 8px;
     text-align: left;
+}
+
+.custom-textarea {
+    font-size: 16px;
+    padding: 10px;
 }
 
 /* Estilo de erros */

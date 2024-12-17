@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="{% static 'app_editor/styles.css' %}">
 </head>
 <body>
-    <h1>Editor SQL</h1>
+    <h1>Editor SQL - Disciplina BD I - Prof. Leonardo de Deus</h1>
 
     <div class="container">
         <!-- Área de Edição -->
         <div class="editor">
             <form method="post">
                 {% csrf_token %}
-                <textarea name="sql_command" rows="6" cols="50" placeholder="Digite seu comando SQL aqui"></textarea>
+                <textarea class="custom-textarea" name="sql_command" rows="20" cols="150" placeholder="Digite seu comando SQL aqui"></textarea>
                 <br>
                 <button type="submit">Executar</button>
             </form>
