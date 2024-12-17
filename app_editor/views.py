@@ -42,26 +42,35 @@ def sql_editor(request):
                 cursor.execute(sql_command)
                 if sql_command.strip().lower().startswith('select'):
                     result = cursor.fetchall()  # Retorna os dados para exibir
-                    columns = [col[0] for col in cursor.description]  # Obtém os nomes das colunas
+                    columns = [col[0] for col in cursor.description]
                 else:
                     result = f"Comando executado com sucesso: {cursor.rowcount} linhas afetadas."
                     columns = None
 
-            # Salva o comando com resultado vazio (sem erro)
-            Query.objects.create(sql_command=sql_command, result="")
-
+            # Salva no histórico com status de sucesso
+            Query.objects.create(sql_command=sql_command, result="success")
         except Exception as e:
-            # Captura o erro e salva no banco
+            # Salva no histórico com status de erro
             error = str(e)
-            Query.objects.create(sql_command=sql_command, result=error)
+            Query.objects.create(sql_command=sql_command, result=f"Erro: {error}")
 
-    # Recupera os últimos comandos do banco de dados
-    query_history = Query.objects.order_by('-id')[:10]
+    # Histórico de comandos
+    query_history = Query.objects.all().order_by('-id')[:10]
+
+    # Adicionar um indicador de sucesso ou erro para o template
+    history_with_status = [
+        {
+            'command': query.sql_command,
+            'status': 'success' if query.result == "success" else 'error',
+            'message': query.result,
+        }
+        for query in query_history
+    ]
 
     return render(request, 'app_editor/sql_editor.html', {
         'result': result,
+        'columns': columns if result and columns else None,
         'error': error,
-        'columns': locals().get('columns'),
-        'query_history': query_history,
+        'query_history': history_with_status,  # Passa a nova lista
     })
 

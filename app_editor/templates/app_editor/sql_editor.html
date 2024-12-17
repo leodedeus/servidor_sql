@@ -56,9 +56,11 @@
             <ul>
                 {% for query in query_history %}
                     <li>
-                        <strong>Comando:</strong> {{ query.sql_command }}<br>
-                        {% if query.result %}
-                            <span class="error"><strong>Erro:</strong> {{ query.result }}</span>
+                        <strong>Comando:</strong> {{ query.command }}<br>
+                        {% if query.status == "error" %}
+                            <span class="error"><strong>{{ query.message }}</strong></span>
+                        {% else %}
+                            <span class="success"><strong>Comando executado com sucesso</strong></span>
                         {% endif %}
                     </li>
                 {% empty %}
