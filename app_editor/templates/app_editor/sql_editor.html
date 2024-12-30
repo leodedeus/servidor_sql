@@ -20,36 +20,8 @@
                 <br>
                 <button type="submit">Executar</button>
             </form>
-
-            <h2>Resultado</h2>
-            {% if error %}
-                <p class="error">Erro: {{ error }}</p>
-            {% elif result and columns %}
-                <table>
-                    <thead>
-                        <tr>
-                            {% for column in columns %}
-                                <th>{{ column }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for row in result %}
-                            <tr>
-                                {% for value in row %}
-                                    <td>{{ value }}</td>
-                                {% endfor %}
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% elif result %}
-                <p>{{ result }}</p>
-            {% else %}
-                <p>Digite um comando SQL para ver o resultado.</p>
-            {% endif %}
         </div>
-
+    
         <!-- Histórico -->
         <div class="history">
             <h2>Histórico de Comandos</h2>
@@ -68,6 +40,37 @@
                 {% endfor %}
             </ul>
         </div>
+    </div>
+    
+    <!-- Nova Div para Resultados -->
+    <div class="result-container">
+        <h2>Resultado</h2>
+        {% if error %}
+            <p class="error">Erro: {{ error }}</p>
+        {% elif result and columns %}
+            <table>
+                <thead>
+                    <tr>
+                        {% for column in columns %}
+                            <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in result %}
+                        <tr>
+                            {% for value in row %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% elif result %}
+            <p>{{ result }}</p>
+        {% else %}
+            <p>Digite um comando SQL para ver o resultado.</p>
+        {% endif %}
     </div>
 </body>
 </html>
