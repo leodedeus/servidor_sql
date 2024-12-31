@@ -9,7 +9,22 @@
     <link rel="stylesheet" href="{% static 'app_editor/styles.css' %}">
 </head>
 <body>
-    <h1>Editor SQL - Disciplina BD I - Prof. Leonardo de Deus</h1>
+    <header>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f5f5f5;">
+            <h1>Editor SQL - Disciplina BD I - Prof. Leonardo de Deus</h1>
+            <div>
+                <!-- Exibe o nome do usuário logado -->
+                {% if user.is_authenticated %}
+                    <span>Bem-vindo, {{ user.username }}!</span>
+                    <!-- Botão para desconectar -->
+                    <a href="{% url 'logout' %}" style="margin-left: 10px;">Sair</a>
+                {% else %}
+                    <!-- Link para login se o usuário não estiver logado -->
+                    <a href="{% url 'login' %}">Entrar</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
 
     <div class="container">
         <!-- Área de Edição -->
@@ -69,7 +84,7 @@
         {% elif result %}
             <p>{{ result }}</p>
         {% else %}
-            <p>Digite um comando SQL para ver o resultado.</p>
+            <p>Resultado da consulta executada.</p>
         {% endif %}
     </div>
 </body>

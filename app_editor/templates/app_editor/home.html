@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo</title>
+    <link rel="stylesheet" href="{% static 'app_editor/styles.css' %}">
+</head>
+<body>
+    <div style="text-align: center; padding: 50px;">
+        <h1>Bora aprender Banco de Dados</h1>
+        <p>Faça login para usar o Editor de SQL</p>
+        <a href="{% url 'login' %}" style="padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 5px;">Fazer Login</a>
+    </div>
+</body>
+</html>

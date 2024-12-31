@@ -1,6 +1,17 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db import connection
 from .models import Query
+from django.shortcuts import render
+from django.contrib.auth import logout
+
+def home(request):
+    return render(request, 'app_editor/home.html')  # Renderiza a tela inicial
+
+# View para logout
+def logout_view(request):
+    logout(request)  # Realiza o logout
+    return redirect('home')  # Redireciona para a tela inicial
+
 
 def sql_editor(request):
     result = None
