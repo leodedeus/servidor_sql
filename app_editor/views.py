@@ -91,7 +91,8 @@ def sql_editor(request):
             )
 
     # Histórico de comandos
-    query_history = Query.objects.all().order_by('-id')[:6]
+    #query_history = Query.objects.all().order_by('-id')[:6]
+    query_history = Query.objects.filter(user=request.user).order_by('-id')[:6]
 
     # Adicionar um indicador de sucesso ou erro para o template
     history_with_status = [
