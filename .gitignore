@@ -1,0 +1,33 @@
+# Ignorar o ambiente virtual
+venv/
+.env/
+env/
+
+# Arquivos temporários do sistema operacional
+*.DS_Store
+Thumbs.db
+
+# Arquivos de log
+*.log
+
+# Compilados Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Configurações de IDEs
+.vscode/
+.idea/
+
+# Arquivos de migração (opcional, se não precisar deles)
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# Arquivos de teste e scripts específicos
+#locustfile.py
+
+# Configurações específicas do projeto
+local_settings.py
+
+# Arquivos dinâmicos
+votacao_partidos.csv
