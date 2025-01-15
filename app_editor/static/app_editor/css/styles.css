@@ -1,0 +1,146 @@
+/* Geral */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1, h2 {
+    margin-bottom: 10px;
+}
+
+.cabecalho {
+    margin-bottom: 20px;
+    border-radius: 5px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 10px; background: #d1d1d1;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5); /* Sombra suave */
+}
+
+/* Container principal */
+.container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px; /* Espaço abaixo para a nova div de resultados */
+}
+
+/* Div de Tabelas */
+.tables {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: #e4e4e4;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5); /* Sombra suave */
+}
+
+/* Editor SQL */
+.editor {
+    flex: 2;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 400px;
+    /*overflow: auto;*/
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: #e4e4e4;
+}
+
+/* Histórico */
+.history {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 400px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5); /* Sombra suave */
+    background-color: #e4e4e4;
+}
+
+/* Div para Resultados */
+.result-container {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 400px; /* Altura máxima para os resultados */
+    overflow-y: auto; /* Barra de rolagem vertical */
+    overflow-x: auto; /* Barra de rolagem horizontal */
+    background-color: #e4e4e4; /* Cor de fundo para destacar */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5); /* Sombra suave */
+}
+
+/* Tabela de resultados */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+.custom-textarea {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px;
+    width: 100%;
+    height: 85%;
+    box-sizing: border-box;
+    margin: 0;
+    background-color: #f0f0f0; /* Cor de fundo para destacar */
+}
+
+/* Estilo de erros */
+.success {
+    color: green;
+    font-weight: bold;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+}
+
+.expand-btn {
+    background-color: #d4d4d4;
+    border-radius: 5px;
+    color: rgb(0, 0, 0);
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 5px 0;
+    width: 100%;
+    text-align: left;
+}
+
+.expand-btn:hover {
+    background-color: #7a91aa;
+}
+
+.columns-list {
+    padding-left: 20px;
+    margin-top: 10px;
+}
+
+.columns-list ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.columns-list li {
+    margin: 5px 0;
+}

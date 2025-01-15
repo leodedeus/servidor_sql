@@ -61,6 +61,7 @@ def sql_editor(request):
 def sql_editor(request):
     result = None
     error = None
+    query_columns = None  # Para armazenar as colunas da consulta executada
 
     if request.method == 'POST':
         sql_command = request.POST.get('sql_command')  # Pega o comando enviado pelo formulário
@@ -70,10 +71,10 @@ def sql_editor(request):
                 cursor.execute(sql_command)
                 if sql_command.strip().lower().startswith('select'):
                     result = cursor.fetchall()  # Retorna os dados para exibir
-                    columns = [col[0] for col in cursor.description]
+                    query_columns = [col[0] for col in cursor.description]
                 else:
                     result = f"Comando executado com sucesso: {cursor.rowcount} linhas afetadas."
-                    columns = None
+                    query_columns = None
 
             # Salva no histórico com status de sucesso, associando o usuário logado
             Query.objects.create(
@@ -91,7 +92,6 @@ def sql_editor(request):
             )
 
     # Histórico de comandos
-    #query_history = Query.objects.all().order_by('-id')[:6]
     query_history = Query.objects.filter(user=request.user).order_by('-id')[:6]
 
     # Adicionar um indicador de sucesso ou erro para o template
@@ -104,9 +104,49 @@ def sql_editor(request):
         for query in query_history
     ]
 
+    tables_info = {}
+
+    # Query para listar as tabelas no SQLite
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'django_%' AND name NOT LIKE 'auth_%' AND name NOT LIKE 'sqlite_%' ORDER BY name;")
+        tables = cursor.fetchall()
+
+        # Para cada tabela, buscar as colunas
+        for table in tables:
+            table_name = table[0]
+            cursor.execute(f"PRAGMA table_info('{table_name}');")
+            table_columns = [row[1] for row in cursor.fetchall()]  # O nome da coluna está na segunda posição
+            tables_info[table_name] = table_columns
+
     return render(request, 'app_editor/sql_editor.html', {
         'result': result,
-        'columns': columns if result and columns else None,
+        'columns': query_columns if result and query_columns else None,  # Use as colunas da consulta
         'error': error,
         'query_history': history_with_status,  # Passa a nova lista
+        'tables_info': tables_info,  # Informações das tabelas
     })
+'''
+@login_required
+def list_tables(request):
+    tables_info = {}
+
+    # Query para listar as tabelas no SQLite
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;")
+        tables = cursor.fetchall()
+
+        # Para cada tabela, buscar as colunas
+        for table in tables:
+            table_name = table[0]
+            cursor.execute(f"PRAGMA table_info('{table_name}');")
+            columns = [row[1] for row in cursor.fetchall()]  # O nome da coluna está na segunda posição
+            tables_info[table_name] = columns
+
+    # Verificando o conteúdo de tables_info
+    print(tables_info)  # Adiciona esta linha para verificar o conteúdo
+
+    # Renderizar o template com as tabelas e colunas
+    return render(request, 'app_editor/sql_editor.html', {
+        'tables_info': tables_info,
+    })
+'''
