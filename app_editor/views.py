@@ -92,7 +92,7 @@ def sql_editor(request):
             )
 
     # Histórico de comandos
-    query_history = Query.objects.filter(user=request.user).order_by('-id')[:6]
+    query_history = Query.objects.filter(user=request.user).order_by('-id')[:10]
 
     # Adicionar um indicador de sucesso ou erro para o template
     history_with_status = [
@@ -107,6 +107,7 @@ def sql_editor(request):
     tables_info = {}
 
     # Query para listar as tabelas no SQLite
+    '''
     with connection.cursor() as cursor:
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'django_%' AND name NOT LIKE 'auth_%' AND name NOT LIKE 'sqlite_%' ORDER BY name;")
         tables = cursor.fetchall()
@@ -117,6 +118,32 @@ def sql_editor(request):
             cursor.execute(f"PRAGMA table_info('{table_name}');")
             table_columns = [row[1] for row in cursor.fetchall()]  # O nome da coluna está na segunda posição
             tables_info[table_name] = table_columns
+    '''
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'django_%' AND name NOT LIKE 'auth_%' AND name NOT LIKE 'sqlite_%' ORDER BY name;")
+        tables = cursor.fetchall()
+
+        for table in tables:
+            table_name = table[0]
+            cursor.execute(f"PRAGMA table_info('{table_name}');")
+            columns_info = cursor.fetchall()  # Retorna todas as informações da tabela
+
+            # Para chaves estrangeiras
+            cursor.execute(f"PRAGMA foreign_key_list('{table_name}');")
+            foreign_keys = cursor.fetchall()
+            foreign_key_columns = {fk[3] for fk in foreign_keys}  # Colunas FK
+
+            # Construir a lista de colunas com tipos e chaves
+            columns = []
+            for column in columns_info:
+                column_name = column[1]
+                column_type = column[2]
+                is_pk = "PK" if column[5] == 1 else ""  # Verifica se é chave primária
+                is_fk = "FK" if column_name in foreign_key_columns else ""  # Verifica se é chave estrangeira
+                key_info = f"({column_type}) {is_pk} {is_fk}".strip()  # Monta o texto com tipo e chaves
+                columns.append(f"{column_name} {key_info}")
+
+            tables_info[table_name] = columns
 
     return render(request, 'app_editor/sql_editor.html', {
         'result': result,

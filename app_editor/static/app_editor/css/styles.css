@@ -61,6 +61,7 @@ h1, h2 {
     max-height: 400px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5); /* Sombra suave */
     background-color: #e4e4e4;
+    overflow-y: auto;
 }
 
 /* Div para Resultados */
