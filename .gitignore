@@ -31,4 +31,5 @@ local_settings.py
 
 # Arquivos dinâmicos
 votacao_partidos.csv
-censo2022_basico.csvcenso2022_demografia.csv
+censo2022_basico.csv
+censo2022_demografia.csv
