@@ -3,6 +3,9 @@ from django.db import connection
 from .models import Query
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.core.exceptions import PermissionDenied
+import re
 
 def home(request):
     return render(request, 'app_editor/home.html')  # Renderiza a tela inicial
@@ -57,39 +60,70 @@ def sql_editor(request):
         'query_history': history_with_status,  # Passa a nova lista
     })
 '''
+# Função para verificar comandos e tabelas proibidos
+def is_command_forbidden(sql_command, forbidden_tables):
+    # Lista de comandos proibidos
+    forbidden_commands = ["INSERT", "UPDATE", "DELETE", "DROP", "ALTER"]
+
+    # Extrai o tipo de comando SQL
+    sql_command_clean = sql_command.strip().upper()
+    command_type = sql_command_clean.split()[0]
+
+    # Se o comando estiver na lista de proibidos
+    if command_type in forbidden_commands:
+        # Percorre as tabelas proibidas e verifica sua presença no comando
+        for table in forbidden_tables:
+            # Cria um padrão regex para encontrar o nome da tabela de forma precisa
+            pattern = r'\b' + re.escape(table) + r'\b'
+            if re.search(pattern, sql_command_clean, re.IGNORECASE):
+                return True
+    return False
+
 @login_required  # Garante que o usuário esteja logado
 def sql_editor(request):
     result = None
     error = None
     query_columns = None  # Para armazenar as colunas da consulta executada
 
+    # Define as tabelas que não podem ser alteradas
+    forbidden_tables = ["test", "censo2022_basico", "censo2022_demografia", "querys"]
+
     if request.method == 'POST':
         sql_command = request.POST.get('sql_command')  # Pega o comando enviado pelo formulário
 
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(sql_command)
-                if sql_command.strip().lower().startswith('select'):
-                    result = cursor.fetchall()  # Retorna os dados para exibir
-                    query_columns = [col[0] for col in cursor.description]
-                else:
-                    result = f"Comando executado com sucesso: {cursor.rowcount} linhas afetadas."
-                    query_columns = None
-
-            # Salva no histórico com status de sucesso, associando o usuário logado
+        # Verificar se o comando SQL é proibido
+        if is_command_forbidden(sql_command, forbidden_tables):
+            error = "Você não tem permissão para executar este comando SQL ou alterar tabelas protegidas."
             Query.objects.create(
-                user=request.user,  # Adiciona o usuário logado
-                sql_command=sql_command,
-                result="success"
-            )
-        except Exception as e:
-            # Salva no histórico com status de erro, associando o usuário logado
-            error = str(e)
-            Query.objects.create(
-                user=request.user,  # Adiciona o usuário logado
+                user=request.user,
                 sql_command=sql_command,
                 result=f"Erro: {error}"
             )
+        else:
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute(sql_command)
+                    if sql_command.strip().lower().startswith('select'):
+                        result = cursor.fetchall()  # Retorna os dados para exibir
+                        query_columns = [col[0] for col in cursor.description]
+                    else:
+                        result = f"Comando executado com sucesso: {cursor.rowcount} linhas afetadas."
+                        query_columns = None
+
+                # Salva no histórico com status de sucesso, associando o usuário logado
+                Query.objects.create(
+                    user=request.user,  # Adiciona o usuário logado
+                    sql_command=sql_command,
+                    result="success"
+                )
+            except Exception as e:
+                # Salva no histórico com status de erro, associando o usuário logado
+                error = str(e)
+                Query.objects.create(
+                    user=request.user,  # Adiciona o usuário logado
+                    sql_command=sql_command,
+                    result=f"Erro: {error}"
+                )
 
     # Histórico de comandos
     query_history = Query.objects.filter(user=request.user).order_by('-id')[:10]
@@ -120,7 +154,7 @@ def sql_editor(request):
             tables_info[table_name] = table_columns
     '''
     with connection.cursor() as cursor:
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'django_%' AND name NOT LIKE 'auth_%' AND name NOT LIKE 'sqlite_%' ORDER BY name;")
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'django_%' AND name NOT LIKE 'auth_%' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE 'querys' ORDER BY name;")
         tables = cursor.fetchall()
 
         for table in tables:
